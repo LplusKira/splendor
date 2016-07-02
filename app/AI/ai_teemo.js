@@ -110,10 +110,21 @@ function cardValue(player, state, cards, card) {
 
   function cardBoardValue(player, card) {
     const cardToValue = card;
-    const totalValue = cards.reduce((total, card) => {
+    const N = 6;
+    const topNInfluenceVal = cards.map(function(card){
+      return cardCardValue(player, card, cardToValue);
+    }).sort(function(heapM, val){
+      return -(heapM - val);
+    }).slice(0,N);
+    const influenceValSum = topNInfluenceVal.reduce(function(sum, val){
+      return sum + val;
+    });
+
+    /*const totalValue = cards.reduce((total, card) => {
       return total + cardCardValue(player, card, cardToValue);
     }, 0);
-    return totalValue;
+    return totalValue;*/
+    return influenceValSum;
   }
 
   function valueForPlayer(player, card) {
@@ -123,7 +134,7 @@ function cardValue(player, state, cards, card) {
     const totalNobleValue = nobles.reduce((total, noble) => {
       return total + cardNobleValue(player, noble);
     }, 0);
-    const value = card.points + totalNobleValue + cardBoardValue(player, card);
+    const value = card.points + totalNobleValue + 1.2 * cardBoardValue(player, card);
     return value - cost;
   }
 
